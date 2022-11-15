@@ -1,20 +1,15 @@
-import { type NextPage } from "next";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../contexts/AuthContext";
-import { api } from "../services/api";
+import { useContext, useEffect } from "react"
+import { AuthContext } from "../contexts/AuthContext"
+import { api } from "../services/api"
 
-const Dashboard: NextPage = () => {
-  const { user } = useContext(AuthContext);
+export default function Dashboard() {
+  const { user } = useContext(AuthContext)
 
   useEffect(() => {
-    api.get("/me").then((response) => console.log(response));
-  }, []);
+    api.get('/me').then(response => console.log(response))
+  }, [])
 
   return (
-    <div>
-      <h1>Dashboard: {user?.email}</h1>
-    </div>
-  );
-};
-
-export default Dashboard;
+    <h1>Dashboard: {user?.email}</h1>
+  )
+}
