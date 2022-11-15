@@ -6,7 +6,7 @@ import "../styles/globals.css";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <AuthProvider>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </AuthProvider>
   );
 };
