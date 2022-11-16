@@ -9,7 +9,7 @@ import {
 import { Accounts } from "./Accounts.entity";
 
 @Entity({ name: "transactions" })
-export class Transactions {
+export class Transaction {
   @PrimaryColumn("uuid")
   id: number;
 
