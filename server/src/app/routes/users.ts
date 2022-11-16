@@ -11,7 +11,4 @@ userRoutes.get("/", usersController.findOne);
 userRoutes.get("/transactions", transactionsController.findByUser);
 
 // transfer to a user
-userRoutes.post(
-  "/transactions/:username",
-  transactionsController.findWithFilter
-);
+userRoutes.post("/transactions/:username", transactionsController.transfer);
