@@ -2,21 +2,20 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryColumn,
 } from "typeorm";
-import { Accounts } from "./Accounts.entity";
+import { Account } from "./Accounts.entity";
 
 @Entity({ name: "transactions" })
 export class Transaction {
   @PrimaryColumn("uuid")
   id: number;
 
-  @OneToMany(() => Accounts, (account) => account.id)
+  @OneToMany(() => Account, (account) => account.id)
   debitedAccountId: number;
 
-  @OneToMany(() => Accounts, (account) => account.id)
+  @OneToMany(() => Account, (account) => account.id)
   creditedAccountId: number;
 
   @Column()

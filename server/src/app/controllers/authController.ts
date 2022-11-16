@@ -3,8 +3,10 @@ import { AppDataSource } from "../../data-source";
 import { User } from "../models/User.entity";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import { Account } from "../models/Accounts.entity";
 
 const usersRepository = AppDataSource.getRepository(User);
+const accountsRepository = AppDataSource.getRepository(Account);
 
 class AuthController {
   async signup(req: Request, res: Response) {
@@ -19,28 +21,44 @@ class AuthController {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    if (username.length < 3) {
+      return res
+        .status(400)
+        .json({ message: "Username must be at least 3 characters" });
+    }
+
+    if (!password.match(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 8 characters long and have at least one number and one uppercase letter",
+      });
+    }
+
     const hashedPassword = await argon2.hash(password);
 
-    const newUser = usersRepository.create({
-      username,
-      password: hashedPassword,
-    });
+    const userAccount = accountsRepository.create();
 
-    await usersRepository.save(newUser);
+    // const newUser = usersRepository.create({
+    //   username,
+    //   password: hashedPassword,
+    // });
 
-    const accessToken = jwt.sign(
-      { userId: newUser.id },
-      process.env.ACCESS_TOKEN_SECRET!,
-      { expiresIn: "15m" }
-    );
+    // await usersRepository.save(newUser);
+    // await accountsRepository.save(userAccount);
 
-    const refreshToken = jwt.sign(
-      { userId: newUser.id },
-      process.env.REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" }
-    );
+    // const accessToken = jwt.sign(
+    //   { userId: newUser.id },
+    //   process.env.ACCESS_TOKEN_SECRET!,
+    //   { expiresIn: "15m" }
+    // );
 
-    res.json({ accessToken, refreshToken });
+    // const refreshToken = jwt.sign(
+    //   { userId: newUser.id },
+    //   process.env.REFRESH_TOKEN_SECRET!,
+    //   { expiresIn: "7d" }
+    // );
+
+    res.json({ userAccount });
   }
 
   async signin(req: Request, res: Response) {
