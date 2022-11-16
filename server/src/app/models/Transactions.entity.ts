@@ -3,14 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Account } from "./Accounts.entity";
 
 @Entity({ name: "transactions" })
 export class Transaction {
-  @PrimaryColumn("uuid")
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @OneToMany(() => Account, (account) => account.id)
   debitedAccountId: number;

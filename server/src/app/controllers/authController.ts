@@ -36,29 +36,33 @@ class AuthController {
 
     const hashedPassword = await argon2.hash(password);
 
-    const userAccount = accountsRepository.create();
+    const newUserAccount = accountsRepository.create({
+      balance: 100.0,
+    });
 
-    // const newUser = usersRepository.create({
-    //   username,
-    //   password: hashedPassword,
-    // });
+    await accountsRepository.save(newUserAccount);
 
-    // await usersRepository.save(newUser);
-    // await accountsRepository.save(userAccount);
+    const newUser = usersRepository.create({
+      username,
+      password: hashedPassword,
+      accountId: newUserAccount.id,
+    });
 
-    // const accessToken = jwt.sign(
-    //   { userId: newUser.id },
-    //   process.env.ACCESS_TOKEN_SECRET!,
-    //   { expiresIn: "15m" }
-    // );
+    await usersRepository.save(newUser);
 
-    // const refreshToken = jwt.sign(
-    //   { userId: newUser.id },
-    //   process.env.REFRESH_TOKEN_SECRET!,
-    //   { expiresIn: "7d" }
-    // );
+    const accessToken = jwt.sign(
+      { userId: newUser.id },
+      process.env.ACCESS_TOKEN_SECRET!,
+      { expiresIn: "15m" }
+    );
 
-    res.json({ userAccount });
+    const refreshToken = jwt.sign(
+      { userId: newUser.id },
+      process.env.REFRESH_TOKEN_SECRET!,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ accessToken, refreshToken });
   }
 
   async signin(req: Request, res: Response) {
