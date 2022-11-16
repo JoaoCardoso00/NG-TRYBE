@@ -122,7 +122,7 @@ class AuthController {
     const accessToken = jwt.sign(
       { userId: user.userId },
       process.env.ACCESS_TOKEN_SECRET!,
-      { expiresIn: "15m" }
+      { expiresIn: "24h" }
     );
 
     res.json({ accessToken });
