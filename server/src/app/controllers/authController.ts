@@ -10,59 +10,64 @@ const accountsRepository = AppDataSource.getRepository(Account);
 
 class AuthController {
   async signup(req: Request, res: Response) {
-    const { username, password } = req.body;
+    try {
+      const { username, password } = req.body;
 
-    const userExists = await usersRepository
-      .createQueryBuilder("user")
-      .where("user.username = :username", { username })
-      .getOne();
+      const userExists = await usersRepository
+        .createQueryBuilder("user")
+        .where("user.username = :username", { username })
+        .getOne();
 
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+      if (userExists) {
+        return res.status(400).json({ message: "User already exists" });
+      }
 
-    if (username.length < 3) {
-      return res
-        .status(400)
-        .json({ message: "Username must be at least 3 characters" });
-    }
+      if (username.length < 3) {
+        return res
+          .status(400)
+          .json({ message: "Username must be at least 3 characters" });
+      }
 
-    if (!password.match(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
-      return res.status(400).json({
-        message:
-          "Password must be at least 8 characters long and have at least one number and one uppercase letter",
+      if (!password.match(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
+        return res.status(400).json({
+          message:
+            "Password must be at least 8 characters long and have at least one number and one uppercase letter",
+        });
+      }
+
+      const hashedPassword = await argon2.hash(password);
+
+      const newUserAccount = accountsRepository.create({
+        balance: 100.0,
       });
+
+      await accountsRepository.save(newUserAccount);
+
+      const newUser = usersRepository.create({
+        username,
+        password: hashedPassword,
+        accountId: newUserAccount.id,
+      });
+
+      await usersRepository.save(newUser);
+
+      const accessToken = jwt.sign(
+        { userId: newUser.id },
+        process.env.ACCESS_TOKEN_SECRET!,
+        { expiresIn: "15m" }
+      );
+
+      const refreshToken = jwt.sign(
+        { userId: newUser.id },
+        process.env.REFRESH_TOKEN_SECRET!,
+        { expiresIn: "7d" }
+      );
+
+      res.json({ accessToken, refreshToken });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
     }
-
-    const hashedPassword = await argon2.hash(password);
-
-    const newUserAccount = accountsRepository.create({
-      balance: 100.0,
-    });
-
-    await accountsRepository.save(newUserAccount);
-
-    const newUser = usersRepository.create({
-      username,
-      password: hashedPassword,
-      accountId: newUserAccount.id,
-    });
-
-    await usersRepository.save(newUser);
-
-    const accessToken = jwt.sign(
-      { userId: newUser.id },
-      process.env.ACCESS_TOKEN_SECRET!,
-      { expiresIn: "15m" }
-    );
-
-    const refreshToken = jwt.sign(
-      { userId: newUser.id },
-      process.env.REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" }
-    );
-
-    res.json({ accessToken, refreshToken });
   }
 
   async signin(req: Request, res: Response) {
