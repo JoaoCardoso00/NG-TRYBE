@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   PrimaryColumn,
 } from "typeorm";
@@ -12,10 +13,10 @@ export class Transactions {
   @PrimaryColumn("uuid")
   id: number;
 
-  @OneToMany((type) => Accounts, (account) => account.id)
+  @OneToMany(() => Accounts, (account) => account.id)
   debitedAccountId: number;
 
-  @OneToMany((type) => Accounts, (account) => account.id)
+  @OneToMany(() => Accounts, (account) => account.id)
   creditedAccountId: number;
 
   @Column()

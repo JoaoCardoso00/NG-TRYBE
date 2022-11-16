@@ -18,7 +18,7 @@ export class User {
   @Column()
   password: string;
 
-  @OneToOne((type) => Accounts)
+  @OneToOne(() => Accounts)
   @JoinColumn()
   accountId: number;
 }

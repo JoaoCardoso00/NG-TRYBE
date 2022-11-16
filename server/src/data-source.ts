@@ -9,6 +9,6 @@ export const AppDataSource = new DataSource({
   password: "postgres",
   database: "postgres",
   logging: false,
-  entities: ["src/app/models/*.ts"],
+  entities: ["src/app/models/*.{ts,js}"],
   migrations: ["src/database/migrations/*.ts"],
 });

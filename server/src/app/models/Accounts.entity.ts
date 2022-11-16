@@ -5,6 +5,6 @@ export class Accounts {
   @PrimaryColumn("uuid")
   id: number;
 
-  @Column()
+  @Column({ insert: false, default: 100.0 })
   balance: number;
 }
