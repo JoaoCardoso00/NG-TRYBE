@@ -91,9 +91,6 @@ class TransactionsController {
 
       await accountsRepository.save(userToTransferAccount);
 
-      console.log(userAccount);
-      console.log(userToTransferAccount);
-
       const transaction = transactionsRepository.create({
         debitedAccount: userAccount,
         creditedAccount: userToTransferAccount,
@@ -117,23 +114,30 @@ class TransactionsController {
     }
 
     try {
-      const decodedToken = jwt.verify(
+      const { userId } = jwt.verify(
         token as string,
         process.env.ACCESS_TOKEN_SECRET!
       ) as JwtPayload;
 
-      if (!decodedToken) {
-        return res.status(403).json({ message: "Invalid token" });
+      // get user account using userId
+      const user = await usersRepository.findOne({
+        where: { id: userId },
+        relations: ["account"],
+      });
+
+      if (!user) {
+        return res.status(400).json({ message: "User not found" });
       }
 
       const transactions = await transactionsRepository
         .createQueryBuilder("transaction")
-        .where("transaction.debitedaccount = :userId", {
-          userId: decodedToken.userId,
+        .where("transaction.debitedAccount = :account", {
+          account: user?.account.id,
         })
-        .orWhere("transaction.creditedaccount = :userId", {
-          userId: decodedToken.userId,
+        .orWhere("transaction.creditedAccount = :account", {
+          account: user?.account.id,
         })
+        .loadAllRelationIds()
         .getMany();
 
       res.json(transactions);
