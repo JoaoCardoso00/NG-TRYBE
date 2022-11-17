@@ -25,6 +25,7 @@ class usersController {
 
     const user = await usersRepository.findOne({
       where: { id: userId },
+      select: ["id", "username", "account"],
       relations: ["account"],
     });
 

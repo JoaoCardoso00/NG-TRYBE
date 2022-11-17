@@ -3,6 +3,7 @@ dotenv.config();
 import express from "express";
 import { AppDataSource } from "./data-source";
 import { router as routes } from "./routes";
+import cors from "cors";
 
 AppDataSource.initialize()
   .then(() => {
@@ -14,6 +15,12 @@ AppDataSource.initialize()
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 app.use(express.json());
 app.use(routes);
 
