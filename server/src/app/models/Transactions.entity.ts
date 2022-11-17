@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -12,11 +14,13 @@ export class Transaction {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @OneToMany(() => Account, (account) => account.id)
-  debitedAccountId: number;
+  @ManyToOne(() => Account, (account) => account.id)
+  @JoinColumn()
+  debitedAccount: Account;
 
-  @OneToMany(() => Account, (account) => account.id)
-  creditedAccountId: number;
+  @ManyToOne(() => Account, (account) => account.id)
+  @JoinColumn()
+  creditedAccount: Account;
 
   @Column()
   value: number;

@@ -46,7 +46,7 @@ class AuthController {
       const newUser = usersRepository.create({
         username,
         password: hashedPassword,
-        accountId: newUserAccount.id,
+        account: newUserAccount,
       });
 
       await usersRepository.save(newUser);
