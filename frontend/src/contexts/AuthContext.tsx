@@ -4,7 +4,7 @@ import Router from "next/router";
 
 import { api } from "../services/apiClient";
 
-type User = {
+export type User = {
   id: string;
   username: string;
   account: {
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       Router.push("/dashboard");
     } catch (err: any) {
-      console.log(err.response.data);
+      return err.response.data.message;
     }
   }
 
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       Router.push("/dashboard");
     } catch (err: any) {
-      console.log(err.response.data);
+      return err.response.data.message;
     }
   }
 

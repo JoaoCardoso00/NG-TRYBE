@@ -3,6 +3,28 @@
 @tailwind utilities;
 
 @layer utilities {
+  .transactionsTable {
+    width: 100%;
+    border-spacing: 0 0.5rem;
+  }
+
+  .transactionsTable > th {
+    color: #969cb3;
+    font-weight: 400;
+    padding: 1rem 2rem;
+    text-align: left;
+    line-height: 1.5rem;
+  }
+
+  .transactionsTable > td {
+    padding: 1rem 2rem;
+    border: 0;
+    background: #ffffff;
+    font-weight: 400;
+    color: #969cb3;
+    border-radius: 0.25rem;
+  }
+
   .linkHover {
     text-decoration: none;
     color: #7c7c8a;

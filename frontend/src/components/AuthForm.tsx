@@ -4,6 +4,7 @@ import { Input, PasswordInput } from "./Input";
 import { AuthContext, AuthCredentials } from "../contexts/AuthContext";
 import { Button } from "./Button";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 interface FormProps {
   formType: "signIn" | "signUp";
@@ -24,12 +25,19 @@ export function AuthForm({ formType }: FormProps) {
   const { signIn, signUp } = useContext(AuthContext);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data);
-    // if (formType === "signIn") {
-    //   await signIn(data);
-    // } else {
-    //   await signUp(data);
-    // }
+    if (formType === "signIn") {
+      const err = await signIn(data);
+
+      if (err) {
+        toast.error(err);
+      }
+    } else {
+      const err = await signUp(data);
+
+      if (err) {
+        toast.error(err);
+      }
+    }
   };
 
   return (

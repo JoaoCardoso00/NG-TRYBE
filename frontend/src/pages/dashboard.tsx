@@ -1,17 +1,107 @@
-import { useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import { ReactNode, useContext } from "react";
+import { AuthContext, User } from "../contexts/AuthContext";
 import { withSSRAuth } from "../utils/withSSRAuth";
+import { setupApiClient } from "../services/api";
+import { Button } from "../components/Button";
+import { ArrowCircleDown, ArrowCircleUp, CurrencyDollar } from "phosphor-react";
 
-export default function Dashboard() {
-  const { user } = useContext(AuthContext);
+interface dashboardProps {
+  user: User;
+}
 
-  return <h1>Dashboard: {user?.username}</h1>;
+export default function Dashboard({ user }: dashboardProps) {
+  return (
+    <main className="flex h-screen w-screen flex-col items-center bg-brand-gray-100">
+      <nav className="flex h-64 w-screen items-start justify-around bg-black">
+        <img
+          src="/imgs/logoDark.png"
+          alt="ng-cash logo"
+          className="h-[8rem] w-[22rem]"
+        />
+        <div className="mt-12 flex w-[25rem] gap-8">
+          <Button className="border-white bg-black text-base text-white">
+            Logout
+          </Button>
+          <Button className=" border-white bg-black text-base text-white">
+            Nova Transferência
+          </Button>
+        </div>
+      </nav>
+      <div className="mt-[-4.5rem] flex gap-8">
+        <DashboardCard
+          title="Entradas"
+          icon={<ArrowCircleUp size={32} color="#96d35f" />}
+          value={2000}
+        />
+        <DashboardCard
+          title="Saídas"
+          icon={<ArrowCircleDown size={32} color="#e83f5b" />}
+          value={2000}
+        />
+        <DashboardCard
+          title="Total"
+          icon={<CurrencyDollar size={32} color="#f5ec00" />}
+          value={2000}
+        />
+      </div>
+      <table className="mt-12 flex w-[64rem] flex-col gap-4">
+        <thead className="grid w-full grid-cols-4 justify-around text-left">
+          <tr className="px-8 text-xl text-brand-gray-800">Usuário</tr>
+          <tr className="px-8 text-xl text-brand-gray-800">Valor</tr>
+          <tr className="px-8 text-xl text-brand-gray-800">Tipo</tr>
+          <tr className="px-8 text-xl text-brand-gray-800">Data</tr>
+        </thead>
+        <tbody>
+          <tr className="grid w-full grid-cols-4 justify-around rounded bg-white">
+            <td className="py-4 px-8 text-xl text-brand-gray-400">Casanova</td>
+            <td className="py-4 px-8 text-brand-gray-400">
+              {new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(2000)}
+            </td>
+            <td className="py-4 px-8 text-brand-gray-400">Entrada</td>
+            <td className="py-4 px-8 text-brand-gray-400">
+              {new Intl.DateTimeFormat("pt-BR").format(new Date())}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  );
+}
+
+interface DashboardCardProps {
+  title: string;
+  value: number;
+  icon: ReactNode;
+}
+
+function DashboardCard({ title, icon, value }: DashboardCardProps) {
+  return (
+    <div className="flex w-80 flex-col gap-6 rounded bg-white p-6">
+      <div className="flex items-center justify-between">
+        <span className=" text-base text-brand-gray-400">{title}</span>
+        {icon}
+      </div>
+      <strong className="text-3xl text-gray-600">
+        {new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(value)}
+      </strong>
+    </div>
+  );
 }
 
 export const getServerSideProps = withSSRAuth(async (ctx) => {
   // TODO: Get user data from API
+  const apiClient = setupApiClient(ctx);
+  const response = await apiClient.get("/users");
+
+  const user = response.data;
 
   return {
-    props: {},
+    props: { user },
   };
 });
