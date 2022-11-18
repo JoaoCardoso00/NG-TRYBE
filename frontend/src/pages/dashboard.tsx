@@ -51,7 +51,7 @@ export default function Dashboard({ user }: dashboardProps) {
           <tr className="px-8 text-xl text-brand-gray-800">Tipo</tr>
           <tr className="px-8 text-xl text-brand-gray-800">Data</tr>
         </thead>
-        <tbody>
+        <tbody className="flex flex-col gap-2">
           <tr className="grid w-full grid-cols-4 justify-around rounded bg-white">
             <td className="py-4 px-8 text-xl text-brand-gray-400">Casanova</td>
             <td className="py-4 px-8 text-brand-gray-400">
