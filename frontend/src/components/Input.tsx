@@ -25,23 +25,23 @@ function PasswordInput({ label, ...props }: inputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="relative">
+    <div className="flex">
       <input
-        className="w-full border-b border-black bg-white text-xl focus:outline-none"
+        className="w-full border-b border-black bg-white pr-1 text-xl leading-3 focus:outline-none"
         {...props}
         type={showPassword ? "text" : "password"}
       />
       {showPassword ? (
         <Eye
-          className="absolute right-0 top-0 mr-2"
-          size={24}
+          size={30}
           onClick={() => setShowPassword(!showPassword)}
+          className="border-b border-black pr-2"
         />
       ) : (
         <EyeClosed
-          className="absolute right-0 top-0 mr-2"
-          size={24}
+          size={30}
           onClick={() => setShowPassword(!showPassword)}
+          className="border-b border-black pr-2"
         />
       )}
     </div>
