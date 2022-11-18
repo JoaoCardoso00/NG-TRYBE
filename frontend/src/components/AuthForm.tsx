@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { useContext } from "react";
 import { Input, PasswordInput } from "./Input";
-import { AuthContext, AuthCredentials } from "../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { Button } from "./Button";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 interface FormProps {

@@ -1,5 +1,5 @@
-import { ReactNode, useContext } from "react";
-import { AuthContext, User } from "../contexts/AuthContext";
+import { ReactNode } from "react";
+import { User } from "../contexts/AuthContext";
 import { withSSRAuth } from "../utils/withSSRAuth";
 import { setupApiClient } from "../services/api";
 import { Button } from "../components/Button";
@@ -44,29 +44,33 @@ export default function Dashboard({ user }: dashboardProps) {
           value={2000}
         />
       </div>
-      <table className="mt-12 flex w-[64rem] flex-col gap-4">
-        <thead className="grid w-full grid-cols-4 justify-around text-left">
-          <tr className="px-8 text-xl text-brand-gray-800">Usuário</tr>
-          <tr className="px-8 text-xl text-brand-gray-800">Valor</tr>
-          <tr className="px-8 text-xl text-brand-gray-800">Tipo</tr>
-          <tr className="px-8 text-xl text-brand-gray-800">Data</tr>
-        </thead>
-        <tbody className="flex flex-col gap-2">
-          <tr className="grid w-full grid-cols-4 justify-around rounded bg-white">
-            <td className="py-4 px-8 text-xl text-brand-gray-400">Casanova</td>
-            <td className="py-4 px-8 text-brand-gray-400">
-              {new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(2000)}
-            </td>
-            <td className="py-4 px-8 text-brand-gray-400">Entrada</td>
-            <td className="py-4 px-8 text-brand-gray-400">
-              {new Intl.DateTimeFormat("pt-BR").format(new Date())}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="mt-12 flex flex-col gap-2">
+        <div className="grid w-full grid-cols-4 justify-around text-left">
+          <span className="px-8 text-xl text-brand-gray-800">Usuário</span>
+          <span className="px-8 text-xl text-brand-gray-800">Valor</span>
+          <span className="px-8 text-xl text-brand-gray-800">Tipo</span>
+          <span className="px-8 text-xl text-brand-gray-800">Data</span>
+        </div>
+        <table className="flex w-[64rem] flex-col gap-4">
+          <tbody className="flex flex-col gap-2">
+            <tr className="grid w-full grid-cols-4 justify-around rounded bg-white">
+              <td className="py-4 px-8 text-xl text-brand-gray-400">
+                Casanova
+              </td>
+              <td className="py-4 px-8 text-brand-gray-400">
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(2000)}
+              </td>
+              <td className="py-4 px-8 text-brand-gray-400">Entrada</td>
+              <td className="py-4 px-8 text-brand-gray-400">
+                {new Intl.DateTimeFormat("pt-BR").format(new Date())}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 }
