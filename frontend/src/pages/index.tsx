@@ -5,12 +5,12 @@ import { Input } from "../components/Input";
 import { AuthContext } from "../contexts/AuthContext";
 import { withSSRGuest } from "../utils/withSSRGuest";
 import Link from "next/link";
-import { Form } from "../components/Form";
+import { AuthForm } from "../components/AuthForm";
 
 export default function Home() {
   return (
     <main className="flex h-screen w-screen flex-col items-center justify-center bg-[url('/imgs/bg.jpeg')] ">
-      <Form formType="signIn" />
+      <AuthForm formType="signIn" />
     </main>
   );
 }

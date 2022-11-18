@@ -1,11 +1,11 @@
 import { GetServerSideProps } from "next";
-import { Form } from "../components/Form";
+import { AuthForm } from "../components/AuthForm";
 import { withSSRGuest } from "../utils/withSSRGuest";
 
 export default function Home() {
   return (
     <main className="flex h-screen w-screen flex-col items-center justify-center bg-[url('/imgs/bg.jpeg')] ">
-      <Form formType="signUp" />
+      <AuthForm formType="signUp" />
     </main>
   );
 }

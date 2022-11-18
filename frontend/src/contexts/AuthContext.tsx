@@ -13,14 +13,14 @@ type User = {
   };
 };
 
-type SignInCredentials = {
+export type AuthCredentials = {
   username: string;
   password: string;
 };
 
 type AuthContextData = {
-  signUp(credentials: SignInCredentials): Promise<void | string>;
-  signIn(credentials: SignInCredentials): Promise<void | string>;
+  signUp(credentials: AuthCredentials): Promise<void | string>;
+  signIn(credentials: AuthCredentials): Promise<void | string>;
   user: User;
   isAuthenticated: boolean;
 };
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  async function signUp({ username, password }: SignInCredentials) {
+  async function signUp({ username, password }: AuthCredentials) {
     try {
       const response = await api.post("/auth/signup", {
         username,
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  async function signIn({ username, password }: SignInCredentials) {
+  async function signIn({ username, password }: AuthCredentials) {
     try {
       const response = await api.put("/auth/signIn", {
         username,
