@@ -17,7 +17,7 @@ export function setupApiClient(ctx: any = undefined) {
   const api = axios.create({
     baseURL: "http://localhost:3333",
     headers: {
-      Authorization: `Bearer ${cookies["nextauth.token"]}`,
+      token: `${cookies["nextauth.token"]}`,
     },
   });
 
@@ -58,7 +58,7 @@ export function setupApiClient(ctx: any = undefined) {
                   }
                 );
 
-                api.defaults.headers["Authorization"] = `Bearer ${token}`;
+                api.defaults.headers["token"] = `${token}`;
 
                 failedRequestsQueue.forEach((request) =>
                   request.onSuccess(token)
@@ -83,7 +83,7 @@ export function setupApiClient(ctx: any = undefined) {
           return new Promise((resolve, reject) => {
             failedRequestsQueue.push({
               onSuccess: (token: string) => {
-                originalConfig.headers["Authorization"] = `Bearer ${token}`;
+                originalConfig.headers["token"] = `${token}`;
 
                 resolve(api(originalConfig));
               },

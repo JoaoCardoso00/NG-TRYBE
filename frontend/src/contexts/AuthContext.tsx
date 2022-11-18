@@ -5,18 +5,22 @@ import Router from "next/router";
 import { api } from "../services/apiClient";
 
 type User = {
-  email: string;
-  permissions: string[];
-  roles: string[];
+  id: string;
+  username: string;
+  account: {
+    id: string;
+    balance: number;
+  };
 };
 
 type SignInCredentials = {
-  email: string;
+  username: string;
   password: string;
 };
 
 type AuthContextData = {
-  signIn(credentials: SignInCredentials): Promise<void>;
+  signUp(credentials: SignInCredentials): Promise<void | string>;
+  signIn(credentials: SignInCredentials): Promise<void | string>;
   user: User;
   isAuthenticated: boolean;
 };
@@ -28,10 +32,10 @@ type AuthProviderProps = {
 export const AuthContext = createContext({} as AuthContextData);
 
 export function signOut() {
-    destroyCookie(undefined, "nextauth.token");
-    destroyCookie(undefined, "nextauth.refreshToken");
+  destroyCookie(undefined, "nextauth.token");
+  destroyCookie(undefined, "nextauth.refreshToken");
 
-    Router.push("/");
+  Router.push("/");
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -43,11 +47,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (token) {
       api
-        .get("/me")
+        .get("/users", {
+          headers: {
+            Authorization: token,
+          },
+        })
         .then((response) => {
-          const { email, permissions, roles } = response.data;
+          const { id, username, account } = response.data;
 
-          setUser({ email, permissions, roles });
+          setUser({ id, username, account });
         })
         .catch(() => {
           signOut();
@@ -55,16 +63,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  async function signIn({ email, password }: SignInCredentials) {
+  async function signUp({ username, password }: SignInCredentials) {
     try {
-      const response = await api.post("sessions", {
-        email,
+      const response = await api.post("/auth/signup", {
+        username,
         password,
       });
 
-      const { token, refreshToken, permissions, roles } = response.data;
+      const { accessToken, refreshToken } = response.data;
 
-      setCookie(undefined, "nextauth.token", token, {
+      setCookie(undefined, "nextauth.token", accessToken, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/",
       });
@@ -74,22 +82,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
         path: "/",
       });
 
-      setUser({
-        email,
-        permissions,
-        roles,
-      });
-
-      api.defaults.headers["Authorization"] = `Bearer ${token}`;
+      api.defaults.headers["token"] = `${accessToken}`;
 
       Router.push("/dashboard");
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.log(err.response.data);
+    }
+  }
+
+  async function signIn({ username, password }: SignInCredentials) {
+    try {
+      const response = await api.put("/auth/signIn", {
+        username,
+        password,
+      });
+
+      const { accessToken, refreshToken } = response.data;
+
+      setCookie(undefined, "nextauth.token", accessToken, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      });
+
+      setCookie(undefined, "nextauth.refreshToken", refreshToken, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      });
+
+      api.defaults.headers["token"] = `${accessToken}`;
+
+      Router.push("/dashboard");
+    } catch (err: any) {
+      console.log(err.response.data);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ signIn, isAuthenticated, user }}>
+    <AuthContext.Provider value={{ signUp, signIn, isAuthenticated, user }}>
       {children}
     </AuthContext.Provider>
   );
