@@ -3,7 +3,12 @@ import { User } from "../contexts/AuthContext";
 import { withSSRAuth } from "../utils/withSSRAuth";
 import { setupApiClient } from "../services/api";
 import { Button } from "../components/Button";
-import { ArrowCircleDown, ArrowCircleUp, CurrencyDollar } from "phosphor-react";
+import {
+  ArrowCircleDown,
+  ArrowCircleUp,
+  CurrencyDollar,
+  SignOut,
+} from "phosphor-react";
 import { TransactionModal } from "../components/TransactionModal";
 
 interface dashboardProps {
@@ -23,12 +28,13 @@ export default function Dashboard({ user }: dashboardProps) {
             alt="ng-cash logo"
             className="h-[8rem] w-[22rem]"
           />
-          <div className="mt-12 flex w-[25rem] gap-8">
-            <Button className="border-white bg-black text-base text-white">
-              Logout
+          <div className="mt-12 mr-16 flex w-[25rem] gap-8">
+            <Button className="flex w-52 items-center justify-center gap-2 border-white bg-black text-2xl text-white">
+              <SignOut size={32} color="#ffffff" />
+              Sair
             </Button>
             <Button
-              className="border-white bg-black text-base text-white"
+              className="border-white bg-black text-xl text-white"
               onClick={() => setIsModalOpen(true)}
             >
               Nova Transferência
