@@ -1,10 +1,5 @@
 import { GetServerSideProps } from "next";
-import { FormEvent, useContext, useState } from "react";
-import { Button } from "../components/Button";
-import { Input } from "../components/Input";
-import { AuthContext } from "../contexts/AuthContext";
 import { withSSRGuest } from "../utils/withSSRGuest";
-import Link from "next/link";
 import { AuthForm } from "../components/AuthForm";
 
 export default function Home() {

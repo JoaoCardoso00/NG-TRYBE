@@ -18,11 +18,13 @@ export function TransactionModal({ isOpen, setIsOpen }: TransactionModalProps) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data);
+    reset();
   };
 
   function closeModal() {

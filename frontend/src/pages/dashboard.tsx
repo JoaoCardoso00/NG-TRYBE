@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { User } from "../contexts/AuthContext";
 import { withSSRAuth } from "../utils/withSSRAuth";
 import { setupApiClient } from "../services/api";
@@ -10,13 +10,37 @@ import {
   SignOut,
 } from "phosphor-react";
 import { TransactionModal } from "../components/TransactionModal";
+import { api } from "../services/apiClient";
 
 interface dashboardProps {
   user: User;
 }
 
+interface Transaction {
+  id: string;
+  value: number;
+  createdAt: string;
+  debitedAccount: string;
+  creditedAccount: string;
+}
+
 export default function Dashboard({ user }: dashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    api.get("/users/transactions").then((response) => {
+      setTransactions(response.data);
+    });
+  }, []);
+
+  let totalDebitedValue = transactions
+    .filter((t) => t.debitedAccount === user.account.id)
+    .reduce((acc, t) => acc + t.value, 0);
+
+  let totalCreditedValue = transactions
+    .filter((t) => t.creditedAccount === user.account.id)
+    .reduce((acc, t) => acc + t.value, 0);
 
   return (
     <>
@@ -45,17 +69,17 @@ export default function Dashboard({ user }: dashboardProps) {
           <DashboardCard
             title="Entradas"
             icon={<ArrowCircleUp size={32} color="#96d35f" />}
-            value={2000}
+            value={totalCreditedValue}
           />
           <DashboardCard
             title="Saídas"
             icon={<ArrowCircleDown size={32} color="#e83f5b" />}
-            value={2000}
+            value={totalDebitedValue}
           />
           <DashboardCard
             title="Total"
             icon={<CurrencyDollar size={32} color="#f5ec00" />}
-            value={2000}
+            value={user.account.balance}
           />
         </div>
         <div className="mt-12 flex flex-col gap-2">
@@ -67,21 +91,34 @@ export default function Dashboard({ user }: dashboardProps) {
           </div>
           <table className="flex w-[64rem] flex-col gap-4">
             <tbody className="flex flex-col gap-2">
-              <tr className="grid w-full grid-cols-4 justify-around rounded bg-white">
-                <td className="py-4 px-8 text-xl text-brand-gray-400">
-                  Casanova
-                </td>
-                <td className="py-4 px-8 text-brand-gray-400">
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(2000)}
-                </td>
-                <td className="py-4 px-8 text-brand-gray-400">Entrada</td>
-                <td className="py-4 px-8 text-brand-gray-400">
-                  {new Intl.DateTimeFormat("pt-BR").format(new Date())}
-                </td>
-              </tr>
+              {transactions.map((transaction) => {
+                return (
+                  <tr
+                    className="grid w-full grid-cols-4 justify-around rounded bg-white"
+                    key={transaction.id}
+                  >
+                    <td className="py-4 px-8 text-xl text-brand-gray-400">
+                      {user.username}
+                    </td>
+                    <td className="py-4 px-8 text-brand-gray-400">
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(transaction.value)}
+                    </td>
+                    <td className="py-4 px-8 text-brand-gray-400">
+                      {transaction.creditedAccount === user.account.id
+                        ? "Entrada"
+                        : "Saída"}
+                    </td>
+                    <td className="py-4 px-8 text-brand-gray-400">
+                      {new Intl.DateTimeFormat("pt-BR").format(
+                        new Date(transaction.createdAt)
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -114,7 +151,6 @@ function DashboardCard({ title, icon, value }: DashboardCardProps) {
 }
 
 export const getServerSideProps = withSSRAuth(async (ctx) => {
-  // TODO: Get user data from API
   const apiClient = setupApiClient(ctx);
   const response = await apiClient.get("/users");
 
