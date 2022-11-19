@@ -21,7 +21,6 @@ services:
     image: server:latest
     build:
       context: server
-      target: production
       dockerfile: Dockerfile
     ports:
       - 3333:3333
