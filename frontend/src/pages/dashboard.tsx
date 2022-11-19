@@ -11,12 +11,14 @@ import {
 } from "phosphor-react";
 import { TransactionModal } from "../components/TransactionModal";
 import { api } from "../services/apiClient";
+import { useRouter } from "next/router";
+import { FilterMenu } from "../components/FilterMenu";
 
 interface dashboardProps {
   user: User;
 }
 
-interface Transaction {
+export interface Transaction {
   id: string;
   value: number;
   createdAt: string;
@@ -27,12 +29,30 @@ interface Transaction {
 export default function Dashboard({ user }: dashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filter, setFilter] = useState<"all" | "debited" | "credited">("all");
+
+  const filteredTransactions =
+    filter === "all"
+      ? transactions
+      : filter === "debited"
+      ? transactions.filter(
+          (transaction) => transaction.debitedAccount === user.account.id
+        )
+      : transactions.filter(
+          (transaction) => transaction.creditedAccount === user.account.id
+        );
+
+  const router = useRouter();
+
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
 
   useEffect(() => {
     api.get("/users/transactions").then((response) => {
       setTransactions(response.data);
     });
-  }, []);
+  }, [user]);
 
   let totalDebitedValue = transactions
     .filter((t) => t.debitedAccount === user.account.id)
@@ -44,8 +64,12 @@ export default function Dashboard({ user }: dashboardProps) {
 
   return (
     <>
-      <TransactionModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
-      <main className="flex h-screen w-screen flex-col items-center bg-brand-gray-100">
+      <TransactionModal
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        refreshData={refreshData}
+      />
+      <main className="flex min-h-screen w-screen flex-col items-center bg-brand-gray-100 pb-8">
         <nav className="flex h-64 w-screen items-start justify-around bg-black">
           <img
             src="/imgs/logoDark.png"
@@ -89,39 +113,71 @@ export default function Dashboard({ user }: dashboardProps) {
           <div className="grid w-full grid-cols-4 justify-around text-left">
             <span className="px-8 text-xl text-brand-gray-800">Usuário</span>
             <span className="px-8 text-xl text-brand-gray-800">Valor</span>
-            <span className="px-8 text-xl text-brand-gray-800">Tipo</span>
+            <div className="relative flex px-8">
+              <span className=" text-xl text-brand-gray-800">Tipo</span>
+              <FilterMenu setFilter={setFilter} />
+            </div>
             <span className="px-8 text-xl text-brand-gray-800">Data</span>
           </div>
           <table className="flex w-[64rem] flex-col gap-4">
             <tbody className="flex flex-col gap-2">
-              {transactions.map((transaction) => {
-                return (
-                  <tr
-                    className="grid w-full grid-cols-4 justify-around rounded bg-white"
-                    key={transaction.id}
-                  >
-                    <td className="py-4 px-8 text-xl text-brand-gray-400">
-                      {user.username}
-                    </td>
-                    <td className="py-4 px-8 text-brand-gray-400">
-                      {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(transaction.value)}
-                    </td>
-                    <td className="py-4 px-8 text-brand-gray-400">
-                      {transaction.creditedAccount === user.account.id
-                        ? "Entrada"
-                        : "Saída"}
-                    </td>
-                    <td className="py-4 px-8 text-brand-gray-400">
-                      {new Intl.DateTimeFormat("pt-BR").format(
-                        new Date(transaction.createdAt)
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {filter === "all"
+                ? transactions.map((transaction) => {
+                    return (
+                      <tr
+                        className="grid w-full grid-cols-4 justify-around rounded bg-white"
+                        key={transaction.id}
+                      >
+                        <td className="py-4 px-8 text-xl text-brand-gray-400">
+                          {user.username}
+                        </td>
+                        <td className="py-4 px-8 text-brand-gray-400">
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(transaction.value)}
+                        </td>
+                        <td className="py-4 px-8 text-brand-gray-400">
+                          {transaction.creditedAccount === user.account.id
+                            ? "Entrada"
+                            : "Saída"}
+                        </td>
+                        <td className="py-4 px-8 text-brand-gray-400">
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(transaction.createdAt)
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                : filteredTransactions.map((transaction) => {
+                    return (
+                      <tr
+                        className="grid w-full grid-cols-4 justify-around rounded bg-white"
+                        key={transaction.id}
+                      >
+                        <td className="py-4 px-8 text-xl text-brand-gray-400">
+                          {user.username}
+                        </td>
+                        <td className="py-4 px-8 text-brand-gray-400">
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(transaction.value)}
+                        </td>
+                        <td className="py-4 px-8 text-brand-gray-400">
+                          {transaction.creditedAccount === user.account.id
+                            ? "Entrada"
+                            : "Saída"}
+                        </td>
+                        <td className="py-4 px-8 text-brand-gray-400">
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(transaction.createdAt)
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
             </tbody>
           </table>
         </div>

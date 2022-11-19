@@ -1,12 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { api } from "../services/apiClient";
 import { Button } from "./Button";
 import { Input } from "./Input";
 
 interface TransactionModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  refreshData: () => void;
 }
 
 type Inputs = {
@@ -14,7 +17,11 @@ type Inputs = {
   value: number;
 };
 
-export function TransactionModal({ isOpen, setIsOpen }: TransactionModalProps) {
+export function TransactionModal({
+  isOpen,
+  setIsOpen,
+  refreshData,
+}: TransactionModalProps) {
   const {
     register,
     handleSubmit,
@@ -23,8 +30,18 @@ export function TransactionModal({ isOpen, setIsOpen }: TransactionModalProps) {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data);
-    reset();
+    try {
+      await api.post("/users/transactions", {
+        value: data.value,
+        username: data.username,
+      });
+
+      reset();
+      setIsOpen(false);
+      refreshData();
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+    }
   };
 
   function closeModal() {
