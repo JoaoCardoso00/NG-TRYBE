@@ -18,7 +18,7 @@ class TransactionsController {
     const { value, username } = req.body;
 
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Não autorizado" });
     }
 
     try {
@@ -33,7 +33,7 @@ class TransactionsController {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "User not found" });
+        return res.status(400).json({ message: "Usuário não encontrado" });
       }
 
       const userToTransfer = await usersRepository.findOne({
@@ -42,7 +42,7 @@ class TransactionsController {
       });
 
       if (!userToTransfer) {
-        return res.status(400).json({ message: "User to transfer not found" });
+        return res.status(400).json({ message: "Usuário a se transferir não encontrado" });
       }
 
       const userAccount = await accountsRepository
@@ -51,7 +51,7 @@ class TransactionsController {
         .getOne();
 
       if (!userAccount) {
-        return res.status(400).json({ message: "Account not found" });
+        return res.status(400).json({ message: "Conta não encontrada" });
       }
 
       const userToTransferAccount = await accountsRepository
@@ -64,29 +64,31 @@ class TransactionsController {
       if (!userToTransferAccount) {
         return res
           .status(400)
-          .json({ message: "Account to transfer not found" });
+          .json({ message: "Conta a transferir não encontrada" });
       }
 
       if (userAccount.balance < value) {
         return res
           .status(400)
-          .json({ message: "Insufficient funds to complete the transfer" });
+          .json({
+            message: "Fundos insuficientes para completar a transferência",
+          });
       }
 
       if (user.id === userToTransfer.id) {
         return res
           .status(400)
-          .json({ message: "You cannot transfer to yourself" });
+          .json({ message: "Você não pode transferir para você mesmo" });
       }
 
       accountsRepository.merge(userAccount, {
-        balance: userAccount.balance - value,
+        balance: Number(userAccount.balance) - Number(value),
       });
 
       await accountsRepository.save(userAccount);
 
       accountsRepository.merge(userToTransferAccount, {
-        balance: userToTransferAccount.balance + value,
+        balance: Number(userToTransferAccount.balance) + Number(value),
       });
 
       await accountsRepository.save(userToTransferAccount);

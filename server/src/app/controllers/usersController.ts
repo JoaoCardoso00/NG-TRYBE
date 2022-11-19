@@ -14,7 +14,7 @@ class usersController {
     const { token } = req.headers;
 
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Não autorizado" });
     }
 
     const { userId } = jwt.verify(
@@ -30,7 +30,7 @@ class usersController {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "Usuário não encontrado" });
     }
 
     return res.json(user);

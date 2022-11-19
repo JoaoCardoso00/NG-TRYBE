@@ -19,19 +19,19 @@ class AuthController {
         .getOne();
 
       if (userExists) {
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(400).json({ message: "Usuário já existe" });
       }
 
       if (username.length < 3) {
-        return res
-          .status(400)
-          .json({ message: "Username must be at least 3 characters" });
+        return res.status(400).json({
+          message: "Nome de usuário tem que ter no minimo 3 caracteres",
+        });
       }
 
       if (!password.match(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
         return res.status(400).json({
           message:
-            "Password must be at least 8 characters long and have at least one number and one uppercase letter",
+            "Senha deve conter no minimo 8 caracteres e pelo menos uma letra maiúscula",
         });
       }
 
@@ -79,13 +79,13 @@ class AuthController {
       .getOne();
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "Usuário não encontrado" });
     }
 
     const validPassword = await argon2.verify(user.password, password);
 
     if (!validPassword) {
-      return res.status(400).json({ message: "Invalid password" });
+      return res.status(400).json({ message: "Senha inválida" });
     }
 
     const accessToken = jwt.sign(
