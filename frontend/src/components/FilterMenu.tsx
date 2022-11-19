@@ -13,9 +13,9 @@ export function FilterMenu({ setFilter }: FilterMenuProps) {
       <Menu.Button>
         <CaretDown size={24} />
       </Menu.Button>
-      <Menu.Items className="absolute top-8  w-56 rounded-xl bg-black p-4">
+      <Menu.Items className="absolute top-8 flex w-56 flex-col gap-2 rounded-xl border-2 border-black bg-white p-4">
         <Menu.Item>
-          <Button onClick={() => setFilter("all")}>No Filter</Button>
+          <Button onClick={() => setFilter("all")}>Todas</Button>
         </Menu.Item>
         <Menu.Item>
           <Button onClick={() => setFilter("credited")}>Entradas</Button>
