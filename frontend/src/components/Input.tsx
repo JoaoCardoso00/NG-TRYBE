@@ -10,7 +10,7 @@ export const Input = forwardRef(({ label, ...props }: inputProps, ref) => {
     <div className="text-left">
       {label && <label className="text-brand-gray-800">{label}</label>}
       <input
-        className="w-full border-b border-black bg-white text-xl focus:outline-none"
+        className="w-full border-b border-black bg-white text-base focus:outline-none md:text-xl"
         {...props}
         ref={ref as any}
       />
@@ -25,7 +25,7 @@ export const PasswordInput = forwardRef(
     return (
       <div className="flex">
         <input
-          className="w-full border-b border-black bg-white pr-1 text-xl leading-3 focus:outline-none"
+          className="w-full border-b border-black bg-white pr-1  text-base leading-3 focus:outline-none md:text-xl"
           {...props}
           type={showPassword ? "text" : "password"}
           ref={ref as any}

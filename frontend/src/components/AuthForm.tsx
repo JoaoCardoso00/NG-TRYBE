@@ -43,7 +43,7 @@ export function AuthForm({ formType }: FormProps) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex h-fit w-[25rem] flex-col items-center justify-center gap-12 rounded-lg bg-white p-8 shadow-lg
+      className="flex h-fit w-3/5 flex-col items-center justify-center gap-12 rounded-lg bg-white p-8 shadow-lg md:w-[25rem]
         "
     >
       <div>
