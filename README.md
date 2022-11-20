@@ -4,7 +4,11 @@ Projeto em que usuários podem realizar transferências entre si.
 
 ## Pré-requisitos
 
-1. Tenha [docker](https://docs.docker.com/engine/install/) e [docker-compose](https://docs.docker.com/compose/) instalado na sua máquina.
+- [Docker](https://www.docker.com/)
+- [NodeJS](https://nodejs.org/)
+- [Docker-compose](https://docs.docker.com/compose/install/)
+- [yarn](https://yarnpkg.com/)
+
 
 ## Como rodar o projeto
 
