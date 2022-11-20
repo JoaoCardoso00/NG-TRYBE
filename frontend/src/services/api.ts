@@ -11,11 +11,11 @@ interface failedRequestsQueueProps {
 let isRefreshing = false;
 let failedRequestsQueue: failedRequestsQueueProps[] = [];
 
-export function setupApiClient(ctx: any = undefined) {
+export function setupApiClient(ctx: any = undefined, isServer = false) {
   let cookies = parseCookies(ctx);
 
   const api = axios.create({
-    baseURL: "http://node-app:3333",
+    baseURL: isServer ? "http://server:3333" : "http://localhost:3333",
     headers: {
       token: `${cookies["nextauth.token"]}`,
     },

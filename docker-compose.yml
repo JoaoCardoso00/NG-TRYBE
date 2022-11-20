@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
   postgres:
@@ -15,15 +15,15 @@ services:
     volumes:
       - ./postgres:/var/lib/postgresql/data
 
-  node-app:
-    container_name: node-app
+  server:
+    container_name: server
     restart: unless-stopped
     image: server:latest
     build:
       context: server
       dockerfile: Dockerfile
     ports:
-      - 3333:3333
+      - "3333:3333"
     depends_on:
       - postgres
 
@@ -38,4 +38,4 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - node-app
+      - server

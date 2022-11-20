@@ -14,7 +14,6 @@ RUN yarn install
 
 COPY . .
 
-EXPOSE 3333/udp
-EXPOSE 3333/tcp
+EXPOSE 3333
 
 CMD ["yarn", "start"]

@@ -210,7 +210,7 @@ function DashboardCard({ title, icon, value }: DashboardCardProps) {
 }
 
 export const getServerSideProps = withSSRAuth(async (ctx) => {
-  const apiClient = setupApiClient(ctx);
+  const apiClient = setupApiClient(ctx, true);
   const response = await apiClient.get("/users");
 
   const user = response.data;
