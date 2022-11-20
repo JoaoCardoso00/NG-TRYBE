@@ -20,5 +20,6 @@ Após isso, o frontend da aplicação pode ser acessado por meio do link:
 
 http://localhost:3000
 
+---
 
 Obrigado pela oportunidade de fazer esse teste :)
